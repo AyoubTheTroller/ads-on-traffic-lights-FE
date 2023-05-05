@@ -1,0 +1,19 @@
+<form (submit)="onRegister()">
+    <label>
+      Name:
+      <input type="text" [(ngModel)]="username" name="name" required>
+    </label>
+    <label>
+      Password:
+      <input type="password" [(ngModel)]="password" name="password" required>
+    </label>
+    <label>
+      Type:
+      <select [(ngModel)]="userType" name="userType">
+        <option value="producer">Producer</option>
+        <option value="consumer">Consumer</option>
+      </select>
+    </label>
+    <button type="submit">Register</button>
+  </form>
+  
