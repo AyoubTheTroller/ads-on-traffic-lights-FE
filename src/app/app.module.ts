@@ -3,17 +3,22 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RegistrationComponent } from './registration/registration.component';
-import { LoginComponent } from './login/login.component';
+import { RegistrationComponent } from './component/registration/registration.component';
+import { LoginComponent } from './component/login/login.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { StoplightCreateComponent } from './component/dashboard/stoplight-create/stoplight-create.component';
+import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { AuthInterceptor } from './session/auth.interceptor';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     RegistrationComponent,
-    LoginComponent
+    LoginComponent,
+    StoplightCreateComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -21,7 +26,9 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

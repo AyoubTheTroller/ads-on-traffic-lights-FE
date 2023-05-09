@@ -1,0 +1,56 @@
+<form (ngSubmit)="onSubmit()" #stoplightForm="ngForm">
+  <div>
+    <label for="latitude">Latitude:</label>
+    <input
+      type="number"
+      id="latitude"
+      [(ngModel)]="stoplight.latitude"
+      name="latitude"
+      required
+    />
+  </div>
+
+  <div>
+    <label for="longitude">Longitude:</label>
+    <input
+      type="number"
+      id="longitude"
+      [(ngModel)]="stoplight.longitude"
+      name="longitude"
+      required
+    />
+  </div>
+
+  <div>
+    <h3>Stoplight Colors</h3>
+    <div>
+      <input
+        type="checkbox"
+        id="redColor"
+        [(ngModel)]="stoplight.redColor"
+        name="redColor"
+      />
+      <label for="redColor">Red</label>
+    </div>
+    <div>
+      <input
+        type="checkbox"
+        id="yellowColor"
+        [(ngModel)]="stoplight.yellowColor"
+        name="yellowColor"
+      />
+      <label for="yellowColor">Yellow</label>
+    </div>
+    <div>
+      <input
+        type="checkbox"
+        id="greenColor"
+        [(ngModel)]="stoplight.greenColor"
+        name="greenColor"
+      />
+      <label for="greenColor">Green</label>
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="!stoplightForm.form.valid">Create Stoplight</button>
+</form>

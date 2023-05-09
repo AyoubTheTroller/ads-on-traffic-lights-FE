@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthenticationService } from '../authentication.service';
+import { AuthenticationService } from '../../service/authentication.service';
 
 @Component({
   selector: 'app-login',
@@ -16,11 +16,11 @@ export class LoginComponent {
     this.authService.login({ username: this.username, password: this.password }).subscribe(
       (response) => {
         console.log('User logged in successfully', response);
-        this.authService.setLoggedIn(true);
       },
       (error) => {
         console.error('Error logging in user', error);
       }
     );
   }
+  
 }
