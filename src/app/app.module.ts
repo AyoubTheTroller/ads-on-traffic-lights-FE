@@ -10,6 +10,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { StoplightCreateComponent } from './component/dashboard/stoplight-create/stoplight-create.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { AuthInterceptor } from './session/auth.interceptor';
+import { StoplightListComponent } from './component/dashboard/stoplight-list/stoplight-list.component';
+import { StoplightDetailsComponent } from './component/dashboard/stoplight-details/stoplight-details.component';
 
 
 @NgModule({
@@ -18,7 +20,9 @@ import { AuthInterceptor } from './session/auth.interceptor';
     RegistrationComponent,
     LoginComponent,
     StoplightCreateComponent,
-    DashboardComponent
+    DashboardComponent,
+    StoplightListComponent,
+    StoplightDetailsComponent
   ],
   imports: [
     BrowserModule,

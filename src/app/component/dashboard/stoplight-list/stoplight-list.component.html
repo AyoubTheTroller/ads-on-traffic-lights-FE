@@ -1,0 +1,7 @@
+<ul>
+    <li *ngFor="let stoplight of stoplights">
+      <a class="stoplight-link" (click)="stoplight.showDetails = !stoplight.showDetails">{{ stoplight.id }}</a>
+      <app-stoplight-details *ngIf="stoplight.showDetails" [stoplight]="stoplight"></app-stoplight-details>
+    </li>
+  </ul>
+  

@@ -1,0 +1,13 @@
+/* stoplight-list.component.scss */
+
+.stoplight-link {
+    color: #007bff;      /* Make the link color blue */
+    text-decoration: none;   /* Remove the underline */
+    cursor: pointer;    /* Change the cursor to a hand when hovering over the link */
+  }
+  
+  .stoplight-link:hover {
+    color: #0056b3;     /* Darken the link color when hovering */
+    text-decoration: underline;  /* Add underline when hovering */
+  }
+  
