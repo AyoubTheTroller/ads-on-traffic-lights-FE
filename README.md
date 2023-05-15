@@ -4,13 +4,13 @@ This project is an Angular-based web application for managing advertisements on 
 
 ### Prerequisites
 
-efore you can run the application, make sure you have the following software installed on your system:
+Before you can run the application, make sure you have the following software installed on your system:
 
-Node.js (version 12.x or later): Download and install it from here: https://nodejs.org/en/download/
-Angular CLI (version 12.x or later): Install it globally using the following command:
-``` sh
-npm install -g @angular/cli
-```
+- Node.js (version 12.x or later): Download and install it from here: https://nodejs.org/en/download/
+- Angular CLI (version 12.x or later): Install it globally using the following command:
+    ``` sh
+    npm install -g @angular/cli
+    ```
 
 ### Installation
 

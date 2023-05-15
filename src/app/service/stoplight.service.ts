@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,9 @@ export class StoplightService {
   constructor(private http: HttpClient) {}
 
   createStoplight(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create`, data);
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders();
+    headers = headers.set('Authorization', 'Bearer ' + token);
+    return this.http.post(`${this.apiUrl}/create`, data, { headers });
   }
 }

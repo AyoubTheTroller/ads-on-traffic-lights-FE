@@ -1,53 +1,74 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, interval } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
 
+interface DecodedToken {
+  sub: string;
+  role: { authority: string }[];
+  exp: number;
+  iat: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiUrl = '/api/user';
+  private apiUrl = 'api/user';
   private loggedInSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    this.checkTokenExpiration();
+  }
 
   register(user: { username: string, password: string, userType: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, user);
+    return this.http.post(`${this.apiUrl}/register`, user).pipe(
+      map((response: any) => {
+        this.setLocalStorage(response);
+        this.setLoggedIn(true);
+        // Navigate to the dashboard
+        this.router.navigate(['/dashboard']);
+        return response;
+      })
+    );
   }
 
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       map((response: any) => {
-        // Replace the 'your-jwt-token' string with the generated JWT token
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyVHlwZSI6InByb2R1Y2VyIiwiaWF0IjoxNjE3MzM4NDAwLCJleHAiOjIyNzc0MjQ4MDB9.JMc5SLtF5S1Sjl0F36zNrZ9oEhQzKg4m4Pf86Gzp8Hw';
+        this.setLocalStorage(response.token);
 
-        localStorage.setItem('token', token);
-  
-        // Decode the token to get user information
-        const decodedToken = this.parseJwt(token);
-        if (decodedToken) {
-          localStorage.setItem('userId', decodedToken.id);
-          localStorage.setItem('userType', response.userType);
-        }
-        
         this.setLoggedIn(true);
-  
         // Navigate to the dashboard
         this.router.navigate(['/dashboard']);
-  
         return response;
       })
     );
+  }
+
+  setLocalStorage(token: any): void{
+    localStorage.setItem('token', token);
+    const decodedToken = this.parseJwt(token);
+    const userType = decodedToken.role && decodedToken.role[0] ? decodedToken.role[0].authority : null;
+    if (userType) {
+      localStorage.setItem('userType', userType);
+    }
+  }
+
+  checkTokenExpiration(): void {
+    // Check every minute if the token is expired
+    interval(60000).subscribe(() => {
+      if (this.isTokenExpired()) {
+        this.logout();
+      }
+    });
   }
   
   logout(): void {
     // Remove user data from local storage
     localStorage.removeItem('token');
-    localStorage.removeItem('userId');
     localStorage.removeItem('userType');
 
     // Redirect to the login page
@@ -75,14 +96,13 @@ export class AuthenticationService {
     }
 
     try {
-      const decodedToken = jwt_decode(token);
+      const decodedToken = jwt_decode(token) as DecodedToken;
       return decodedToken;
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
     }
   }
-
 
   isLoggedIn(): Observable<boolean> {
     return this.loggedInSubject.asObservable();
@@ -94,10 +114,6 @@ export class AuthenticationService {
 
   getUserType(): string | null{
     return localStorage.getItem('userType');
-  }
-
-  getUserId(): string | null{
-    return localStorage.getItem('userId');
   }
 
   getToken(): string | null {

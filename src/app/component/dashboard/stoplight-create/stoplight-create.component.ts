@@ -8,8 +8,7 @@ interface Stoplight {
   longitude: number | null;
   redColor: boolean;
   yellowColor: boolean;
-  greenColor: boolean;
-  producer: string | null;
+  greenColor: boolean
 }
 
 @Component({
@@ -24,17 +23,14 @@ export class StoplightCreateComponent {
     longitude: null,
     redColor: false,
     yellowColor: false,
-    greenColor: false,
-    producer: null
+    greenColor: false
   };
 
   constructor(private authService: AuthenticationService, private stoplightService: StoplightService) {
-    this.stoplight.producer = this.authService.getUserId();
   }
 
   onSubmit(): void {
     if (this.authService.isLoggedIn()) {
-
       this.stoplightService.createStoplight(this.stoplight).subscribe(
         (response) => {
           console.log('Stoplight created:', response);
