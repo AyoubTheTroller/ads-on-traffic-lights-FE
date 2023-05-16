@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 import { Observable, BehaviorSubject, interval } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -20,14 +20,17 @@ export class AuthenticationService {
   private apiUrl = 'api/user';
   private loggedInSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) {
+    // Check local storage for token and set loggedInSubject accordingly
+    this.loggedInSubject = new BehaviorSubject<boolean>(this.getToken() !== null && !this.isTokenExpired());
     this.checkTokenExpiration();
-  }
+  }  
 
   register(user: { username: string, password: string, userType: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user).pipe(
       map((response: any) => {
         this.setLocalStorage(response);
+        this.cookieService.set('token', response.token);
         this.setLoggedIn(true);
         // Navigate to the dashboard
         this.router.navigate(['/dashboard']);
@@ -39,7 +42,8 @@ export class AuthenticationService {
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       map((response: any) => {
-        this.setLocalStorage(response.token);
+        this.setLocalStorage(response);
+        this.cookieService.set('token', response.token);
 
         this.setLoggedIn(true);
         // Navigate to the dashboard
@@ -49,13 +53,8 @@ export class AuthenticationService {
     );
   }
 
-  setLocalStorage(token: any): void{
-    localStorage.setItem('token', token);
-    const decodedToken = this.parseJwt(token);
-    const userType = decodedToken.role && decodedToken.role[0] ? decodedToken.role[0].authority : null;
-    if (userType) {
-      localStorage.setItem('userType', userType);
-    }
+  setLocalStorage(response: any): void{
+    localStorage.setItem('userType', response.userType);
   }
 
   checkTokenExpiration(): void {
@@ -69,7 +68,7 @@ export class AuthenticationService {
   
   logout(): void {
     // Remove user data from local storage
-    localStorage.removeItem('token');
+    this.cookieService.delete('token');
     localStorage.removeItem('userType');
 
     // Redirect to the login page
@@ -105,14 +104,14 @@ export class AuthenticationService {
     }
   }
 
-  public getAuthHeader(): HttpHeaders {
+  /*public getAuthHeader(): HttpHeaders {
     const token = this.getToken();
     let headers = new HttpHeaders();
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
     return headers;
-  }
+  }*/
 
   isLoggedIn(): Observable<boolean> {
     return this.loggedInSubject.asObservable();
@@ -127,7 +126,8 @@ export class AuthenticationService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
-  }  
+    return this.cookieService.get('token');
+  }
+    
 
 }

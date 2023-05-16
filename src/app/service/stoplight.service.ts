@@ -14,14 +14,11 @@ export class StoplightService {
   }
 
   createStoplight(data: any): Observable<any> {
-    const headers = this.authService.getAuthHeader(); 
-    return this.http.post(`${this.apiUrl}/create`, data, { headers });
+    return this.http.post(`${this.apiUrl}/create`, data);
   }
 
   getAllStoplights(): Observable<any> {
-    const headers = this.authService.getAuthHeader(); 
-    return this.http.get(`${this.apiUrl}/all`, { headers });
+    return this.http.get(`${this.apiUrl}/all`);
   }
-
 
 }
